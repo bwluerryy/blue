@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Mood Board</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Create Your Own Mood Board</h1>
+
+        <div class="input-area">
+            <input type="file" id="imageInput" accept="image/*" />
+            <input type="text" id="textInput" placeholder="Add text to your mood board" />
+            <input type="color" id="colorPicker" value="#ff0000" />
+            <button id="addImageBtn">Add Image</button>
+            <button id="addTextBtn">Add Text</button>
+            <button id="addColorBtn">Add Color Block</button>
+        </div>
+
+        <div id="moodBoard" class="mood-board">
+            <!-- User's mood board items will appear here -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+<script>
+
+  
+const moodBoard = document.getElementById('moodBoard');
+const imageInput = document.getElementById('imageInput');
+const textInput = document.getElementById('textInput');
+const colorPicker = document.getElementById('colorPicker');
+
+document.getElementById('addImageBtn').addEventListener('click', () => {
+    const file = imageInput.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const imgElement = document.createElement('img');
+            imgElement.src = event.target.result;
+            addToMoodBoard(imgElement);
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+document.getElementById('addTextBtn').addEventListener('click', () => {
+    const text = textInput.value;
+    if (text) {
+        const textElement = document.createElement('p');
+        textElement.innerText = text;
+        addToMoodBoard(textElement);
+        textInput.value = ''; // Clear input field
+    }
+});
+
+document.getElementById('addColorBtn').addEventListener('click', () => {
+    const colorBlock = document.createElement('div');
+    colorBlock.className = 'color-block';
+    colorBlock.style.backgroundColor = colorPicker.value;
+    addToMoodBoard(colorBlock);
+});
+
+function addToMoodBoard(element) {
+    const moodItem = document.createElement('div');
+    moodItem.className = 'mood-item';
+    moodItem.appendChild(element);
+    moodBoard.appendChild(moodItem);
+
+    // Enable dragging for the mood item
+    makeDraggable(moodItem);
+}
+
+function makeDraggable(element) {
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    element.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        offsetX = e.offsetX;
+        offsetY = e.offsetY;
+        element.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', function(e) {
+        if (isDragging) {
+            element.style.left = `${e.pageX - offsetX}px`;
+            element.style.top = `${e.pageY - offsetY}px`;
+        }
+    });
+
+    document.addEventListener('mouseup', function() {
+        isDragging = false;
+        element.style.cursor = 'grab';
+    });
+}
+
+
+
+</script>
+</html>
